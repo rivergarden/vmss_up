@@ -32,18 +32,6 @@ module "common" {
 
 //********************** Networking **************************//
 
-data "azurerm_subnet" "frontend" {
-  name = var.frontend_subnet_name
-  virtual_network_name = var.vnet_name
-  resource_group_name = var.vnet_resource_group
-}
-
-data "azurerm_subnet" "backend" {
-  name = var.backend_subnet_name
-  virtual_network_name = var.vnet_name
-  resource_group_name = var.vnet_resource_group
-}
-
 # module "network-security-group" {
 #     source = "../modules/network-security-group"
 #     count = var.nsg_id == "" ? 1 : 0
@@ -323,7 +311,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss" {
      ip_configuration {
        name = "ipconfig1"
        subnet_id = data.azurerm_subnet.frontend.id
-       load_balancer_backend_address_pool_ids = var.deployment_mode != "Internal" ? [azurerm_lb_backend_address_pool.frontend-lb-pool[0].id]: null
+    #    load_balancer_backend_address_pool_ids = var.deployment_mode != "Internal" ? [azurerm_lb_backend_address_pool.frontend-lb-pool[0].id]: null
+        load_balancer_backend_address_pool_ids = data.azurerm_lb.external.TOFIX...!
        primary = true
        public_ip_address {
          name = "${var.vmss_name}-public-ip"
@@ -341,7 +330,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss" {
      ip_configuration {
        name = "ipconfig2"
        subnet_id = data.azurerm_subnet.backend.id
-       load_balancer_backend_address_pool_ids = var.deployment_mode != "External" ? [azurerm_lb_backend_address_pool.backend-lb-pool[0].id] : null
+    #    load_balancer_backend_address_pool_ids = var.deployment_mode != "External" ? [azurerm_lb_backend_address_pool.backend-lb-pool[0].id] : null
+        load_balancer_backend_address_pool_ids = data.azurerm_lb.internal.TOFIX...!
        primary = true
      }
  }

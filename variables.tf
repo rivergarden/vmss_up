@@ -2,16 +2,19 @@
 variable "vmss_name"{
   description = "vmss name"
   type = string
+  default = "r8120vmss"
 }
 
 variable "resource_group_name" {
   description = "Azure Resource Group name to build into"
   type = string
+  default = "R8120_vpss_up"
 }
 
 variable "location" {
   description = "The location/region where resources will be created. The full list of Azure regions can be found at https://azure.microsoft.com/regions"
   type = string
+  default = "Sweden Central"
 }
 
 //********************** Virtual Machine Instances Variables **************************//
@@ -34,11 +37,13 @@ variable "admin_password" {
 variable "serial_console_password_hash" {
   description = "Optional parameter, used to enable serial console connection in case of SSH key as authentication type"
   type = string
+  default = ""
 }
 
 variable "maintenance_mode_password_hash" {
   description = "Maintenance mode password hash, relevant only for R81.20 and higher versions"
   type = string
+  default = "grub.pbkdf2.sha512.10000.CEA34D9AD2B99630616C3BA5065F13C86A96BB8281E771845A3B9ECC73214A8718EF263EF76A5D27749DACDF02EED7E5DCC9D98806D48CF7AA2EDBA6AEBC5BF3.18353816CBC63E55397EA22D6ADBB1F87BA44C08A3A34F7420DB614F401371793356A3E99A08C82D735F2FA9BC39281236C513763B6F585486E69E3DAFE53FFB"
 }
 
 variable "availability_zones_num" {
@@ -46,6 +51,7 @@ variable "availability_zones_num" {
   #Availability Zones are only supported in several regions at this time
   #"centralus", "eastus2", "francecentral", "northeurope", "southeastasia", "westeurope", "westus2", "eastus", "uksouth"
   #type = list(string)
+  default = 0
 }
 
 locals { // locals for 'availability_zones_num' allowed values
@@ -62,6 +68,7 @@ locals { // locals for 'availability_zones_num' allowed values
 variable "sic_key" {
   description = "Secure Internal Communication(SIC) key"
   type = string
+  default = "vpn1234vpn1234"
 }
 resource "null_resource" "sic_key_invalid" {
   count = length(var.sic_key) >= 12 ? 0 : "SIC key must be at least 12 characters long"
@@ -94,22 +101,26 @@ variable "number_of_vm_instances"{
 variable "minimum_number_of_vm_instances" {
   description = "Minimum number of VM instances to deploy"
   type = string
+  default = "2"
 }
 
 variable "maximum_number_of_vm_instances" {
   description = "Maximum number of VM instances to deploy"
   type = string
+  default = "10"
 }
 
 variable "vm_size" {
   description = "Specifies size of Virtual Machine"
   type = string
+  default = "Standard_D3_v2 "
 }
 
 
 variable "os_version" {
   description = "GAIA OS version"
   type = string
+  default = "R8120"
 }
 
 locals { // locals for 'vm_os_offer' allowed values
@@ -134,11 +145,13 @@ resource "null_resource" "disk_size_validation" {
 variable "vm_os_sku" {
   description = "The sku of the image to be deployed."
   type = string
+  default = "sg-byol"
 }
 
 variable "authentication_type" {
   description = "Specifies whether a password authentication or SSH Public Key authentication should be used"
   type = string
+  default = "Password"
 }
 locals { // locals for 'authentication_type' allowed values
   authentication_type_allowed_values = [
@@ -152,6 +165,7 @@ locals { // locals for 'authentication_type' allowed values
 variable "allow_upload_download" {
   description = "Automatically download Blade Contracts and other important data. Improve product experience by sending data to Check Point"
   type = bool
+  default = true
 }
 
 variable "is_blink" {
@@ -162,11 +176,13 @@ variable "is_blink" {
 variable "management_name" {
   description = "The name of the management server as it appears in the configuration file"
   type = string
+  default = "mnTest"
 }
 
 variable "management_IP" {
   description = "The IP address used to manage the VMSS instances"
   type = string
+  default = "10.0.0.199"
 }
 
 variable "management_interface" {
@@ -187,6 +203,7 @@ locals { // locals for 'management_interface' allowed values
 variable "configuration_template_name" {
   description = "The configuration template name as it appears in the configuration file"
   type = string
+  default = "tnVMSSR8120"
 }
 
 variable "admin_shell" {
@@ -210,23 +227,31 @@ locals {
 variable "vnet_name" {
   description = "Virtual Network name"
   type = string
+  default = "vnet01"
 }
 
 variable "frontend_subnet_name" {
   description = "Frontend subnet name"
   type = string
+  default = "VMSS-Frontend"
 }
 
 variable "backend_subnet_name" {
   description = "Backend subnet name"
   type = string
+  default = "VMSS-Backend"
 }
 
 variable "vnet_resource_group" {
   description = "Resource group of existing vnet"
   type = string
+  default = "R8040_vmss_up"
 }
-
+variable "lb_resource_group" {
+  description = "Resource group of existing vnet"
+  type = string
+  default = "R8040_vmss_up"
+}
 variable "vnet_allocation_method" {
   description = "IP address allocation method"
   type = string
@@ -266,6 +291,7 @@ locals {  // locals for 'deployment_mode' allowed values
 variable "backend_lb_IP_address" {
   description = "The IP address is defined by its position in the subnet"
   type = number
+  default = 7
 }
 
 variable "lb_probe_port" {
@@ -303,6 +329,7 @@ variable "backend_port" {
 variable "frontend_load_distribution" {
   description = "Specifies the load balancing distribution type to be used by the frontend load balancer"
   type = string
+  default = "Default"
 }
 
 locals { // locals for 'frontend_load_distribution' allowed values
@@ -318,6 +345,7 @@ locals { // locals for 'frontend_load_distribution' allowed values
 variable "backend_load_distribution" {
   description = "Specifies the load balancing distribution type to be used by the backend load balancer"
   type = string
+  default = "Default"
 }
 
 locals { // locals for 'frontend_load_distribution' allowed values
@@ -335,6 +363,7 @@ locals { // locals for 'frontend_load_distribution' allowed values
 variable "vm_os_offer" {
   description = "The name of the offer of the image that you want to deploy.Choose from: check-point-cg-r8040, check-point-cg-r81, check-point-cg-r8110, check-point-cg-r8120"
   type = string
+  default = "check-point-cg-r8120"
 }
 
 locals { // locals for 'vm_os_offer' allowed values
@@ -350,6 +379,7 @@ locals { // locals for 'vm_os_offer' allowed values
 
 variable "bootstrap_script"{
   description = "An optional script to run on the initial boot"
+  default = ""
   #example:
   #"touch /home/admin/bootstrap.txt; echo 'hello_world' > /home/admin/bootstrap.txt"
 }
@@ -357,28 +387,31 @@ variable "bootstrap_script"{
 variable "notification_email" {
   description = "Specifies a list of custom email addresses to which the email notifications will be sent"
   type = string
+  default = ""
 }
 
 //********************** Credentials **************************//
 variable "tenant_id" {
   description = "Tenant ID"
   type = string
+  default = "01605c2e-84df-4dfc-af6c-4f706350e670"
 }
 
 variable "subscription_id" {
   description = "Subscription ID"
   type = string
+  default = "28c1217c-6c52-46b2-8530-ca7fd471230f"
 }
 
-variable "client_id" {
-  description = "Application ID(Client ID)"
-  type = string
-}
+# variable "client_id" {
+#   description = "Application ID(Client ID)"
+#   type = string
+# }
 
-variable "client_secret" {
-  description = "A secret string that the application uses to prove its identity when requesting a token. Also can be referred to as application password."
-  type = string
-}
+# variable "client_secret" {
+#   description = "A secret string that the application uses to prove its identity when requesting a token. Also can be referred to as application password."
+#   type = string
+# }
 
 variable "sku" {
   description = "SKU"
