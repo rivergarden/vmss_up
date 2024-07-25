@@ -9,7 +9,7 @@
 
 //********************** Basic Configuration **************************//
 module "common" {
-  source = "../modules/common"
+  source = "./modules/common"
   resource_group_name = var.resource_group_name
   location = var.location
   admin_password = var.authentication_type == "SSH Public Key" ? random_id.random_id.hex : var.admin_password
@@ -44,27 +44,27 @@ data "azurerm_subnet" "backend" {
   resource_group_name = var.vnet_resource_group
 }
 
-module "network-security-group" {
-    source = "../modules/network-security-group"
-    count = var.nsg_id == "" ? 1 : 0
-    resource_group_name = module.common.resource_group_name
-    security_group_name = "${module.common.resource_group_name}_nsg"
-    location = module.common.resource_group_location
-    security_rules = [
-      {
-        name = "AllowAllInBound"
-        priority = "100"
-        direction = "Inbound"
-        access = "Allow"
-        protocol = "*"
-        source_port_ranges = "*"
-        destination_port_ranges = "*"
-        description = "Allow all inbound connections"
-        source_address_prefix = "*"
-        destination_address_prefix = "*"
-      }
-    ]
-}
+# module "network-security-group" {
+#     source = "../modules/network-security-group"
+#     count = var.nsg_id == "" ? 1 : 0
+#     resource_group_name = module.common.resource_group_name
+#     security_group_name = "${module.common.resource_group_name}_nsg"
+#     location = module.common.resource_group_location
+#     security_rules = [
+#       {
+#         name = "AllowAllInBound"
+#         priority = "100"
+#         direction = "Inbound"
+#         access = "Allow"
+#         protocol = "*"
+#         source_port_ranges = "*"
+#         destination_port_ranges = "*"
+#         description = "Allow all inbound connections"
+#         source_address_prefix = "*"
+#         destination_address_prefix = "*"
+#       }
+#     ]
+# }
 
 //********************** Load Balancers **************************//
 resource "random_id" "random_id" {
@@ -319,7 +319,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss" {
      primary = true
      enable_ip_forwarding = true
      enable_accelerated_networking = true
-     network_security_group_id = module.network-security-group[0].network_security_group_id
+#      network_security_group_id = module.network-security-group[0].network_security_group_id
      ip_configuration {
        name = "ipconfig1"
        subnet_id = data.azurerm_subnet.frontend.id
