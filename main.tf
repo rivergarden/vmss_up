@@ -312,13 +312,13 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss" {
        name = "ipconfig1"
        subnet_id = data.azurerm_subnet.frontend.id
     #    load_balancer_backend_address_pool_ids = var.deployment_mode != "Internal" ? [azurerm_lb_backend_address_pool.frontend-lb-pool[0].id]: null
-        load_balancer_backend_address_pool_ids = data.azurerm_lb.external.TOFIX...!
+       load_balancer_backend_address_pool_ids = [data.azurerm_lb_backend_address_pool.frontend_pool.id]
        primary = true
-       public_ip_address {
-         name = "${var.vmss_name}-public-ip"
-         idle_timeout_in_minutes = 15
-         domain_name_label = "${lower(var.vmss_name)}-dns-name"
-       }
+    #    public_ip_address {
+    #      name = "${var.vmss_name}-public-ip"
+    #      idle_timeout_in_minutes = 15
+    #      domain_name_label = "${lower(var.vmss_name)}-dns-name"
+    #    }
      }
  }
 
@@ -331,7 +331,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss" {
        name = "ipconfig2"
        subnet_id = data.azurerm_subnet.backend.id
     #    load_balancer_backend_address_pool_ids = var.deployment_mode != "External" ? [azurerm_lb_backend_address_pool.backend-lb-pool[0].id] : null
-        load_balancer_backend_address_pool_ids = data.azurerm_lb.internal.TOFIX...!
+        load_balancer_backend_address_pool_ids = [data.azurerm_lb_backend_address_pool.backend_pool.id]
        primary = true
      }
  }

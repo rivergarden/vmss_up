@@ -50,8 +50,9 @@ variable "availability_zones_num" {
   description = "The number of availability zones to use for Scale Set. Note that the load balancers and their IP addresses will be redundant in any case"
   #Availability Zones are only supported in several regions at this time
   #"centralus", "eastus2", "francecentral", "northeurope", "southeastasia", "westeurope", "westus2", "eastus", "uksouth"
-  #type = list(string)
-  default = 0
+  # type = list(string)
+  type = string 
+  default = "0"
 }
 
 locals { // locals for 'availability_zones_num' allowed values
@@ -113,9 +114,8 @@ variable "maximum_number_of_vm_instances" {
 variable "vm_size" {
   description = "Specifies size of Virtual Machine"
   type = string
-  default = "Standard_D3_v2 "
+  default = "Standard_D3_v2"
 }
-
 
 variable "os_version" {
   description = "GAIA OS version"
@@ -222,6 +222,10 @@ locals {
   // Will fail if [var.admin_shell] is invalid
   validate_admin_shell_value = index(local.admin_shell_allowed_values, var.admin_shell)
 }
+variable "old_vmss_name" {
+  type = string
+  default = "r8040vmss"
+}
 
 //********************** Networking Variables **************************//
 variable "vnet_name" {
@@ -252,6 +256,24 @@ variable "lb_resource_group" {
   type = string
   default = "R8040_vmss_up"
 }
+variable "elb_name" {
+    type = string
+    default = "custom-frontend-lb"
+}
+variable "elb_pool_name" {
+    type = string
+    default = "custom-frontend-lb-pool"
+}
+
+variable "ilb_name" {
+    type = string
+    default = "custom-backend-lb"
+}
+variable "ilb_pool_name" {
+    type = string
+    default = "custom-backend-lb-pool"
+}
+
 variable "vnet_allocation_method" {
   description = "IP address allocation method"
   type = string

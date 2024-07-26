@@ -1,20 +1,28 @@
 # existing elb
 data "azurerm_lb" "external" {
-    name = "custom-frontend-lb"
+    name = var.elb_name
     resource_group_name = var.lb_resource_group
 
 }
 
-# existing elb backend pool name
+# existing elb backend pool
+data "azurerm_lb_backend_address_pool" "frontend_pool" {
+  name            = var.elb_pool_name
+  loadbalancer_id = data.azurerm_lb.external.id
+}
 
 # existing ilb
 data "azurerm_lb" "internal" {
-    name = "custom-backend-lb"
+    name = var.ilb_name
     resource_group_name = var.lb_resource_group
     
 }
 
-# existing ilb backend pool name
+# existing ilb backend pool
+data "azurerm_lb_backend_address_pool" "backend_pool" {
+  name            = var.ilb_pool_name
+  loadbalancer_id = data.azurerm_lb.internal.id
+}
 
 # existing vnet 
 
@@ -34,9 +42,11 @@ data "azurerm_subnet" "backend" {
   virtual_network_name = var.vnet_name
   resource_group_name = var.vnet_resource_group
 }
-# existing vnet name 
 
 # existing NSG
+# data "azurerm_" {}
 
-
-
+data "azurerm_virtual_machine_scale_set" "R8040_VMSS"{
+    resource_group_name = var.vnet_resource_group
+    name = var.old_vmss_name
+}
